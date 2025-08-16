@@ -1,18 +1,15 @@
-# ===== PLUGINS =====
-[[plugins]]
-  package = "@netlify/plugin-sitemap"
-
-# ===== BUILD =====
 [build]
   command = "CI= npm run build"
   publish = "build"
+  functions = "netlify/functions"
 
-# ===== FUNCTIONS =====
 [functions]
-  directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# ===== REDIRECTS =====
+# ✅ Keep only sitemap (removed html-validate plugin)
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
