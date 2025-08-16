@@ -1,16 +1,22 @@
-# Netlify config for Create React App + Netlify Functions
+# ===== PLUGIN CONFIGURATION =====
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+[[plugins]]
+  package = "netlify-plugin-html-validate"
+
+# ===== BUILD CONFIGURATION =====
 [build]
-  command = "npm ci && npm run build"
+  command = "CI= npm run build"
   publish = "build"
 
+# ===== FUNCTIONS CONFIGURATION =====
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
+# ===== REDIRECTS CONFIGURATION =====
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-# Optional, but keep it simple for now (no HTML validator)
-[[plugins]]
-  package = "@netlify/plugin-sitemap"
