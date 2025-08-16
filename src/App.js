@@ -44,28 +44,28 @@ function App() {
    */
   useEffect(() => {
     checkApiStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
    * Function to verify that our Netlify functions are working properly
-   * In production, this will confirm the backend is accessible
+   * Uses the pretty redirect route /api/health
    */
   const checkApiStatus = async () => {
     try {
-      // Attempt to reach our health check endpoint
-      const response = await axios.get('/.netlify/functions/health-check', {
-        timeout: 5000 // 5 second timeout
-      });
-      
-      if (response.status === 200) {
+      const response = await axios.get('/api/health', { timeout: 5000, headers: { 'Cache-Control': 'no-cache' } });
+      const data = response.data || {};
+      if (response.status === 200 && (data.ok === true || data.healthy === true)) {
         setApiStatus('connected');
       } else {
         setApiStatus('error');
       }
-    } catch (error) {
-      console.log('API check result:', error.message);
-      // In development, this is expected since functions may not be running
-      setApiStatus('development');
+    } catch (err) {
+      // In local dev (vite/cra), functions may not be running; mark as development
+      const isLocal = typeof window !== 'undefined' && /localhost|127\.0\.0\.1/.test(window.location.hostname);
+      setApiStatus(isLocal ? 'development' : 'error');
+      // Don’t block the UI on health failures
+      console.log('API health check failed:', err?.message || err);
     }
   };
 
@@ -92,30 +92,31 @@ function App() {
     try {
       console.log('Starting content generation with:', {
         inputType,
-        inputValue: inputValue.substring(0, 50) + '...', // Log partial input for debugging
+        inputValue: inputValue.substring(0, 50) + '...',
         selectedNiche,
         apiProvider
       });
 
-      // Make the API call to our serverless function
-      const response = await axios.post('/.netlify/functions/generate-content', {
-        inputValue: inputValue.trim(),
-        inputType,
-        selectedNiche,
-        apiProvider,
-        // Additional parameters for content customization
-        wordCount: 3000,
-        includeAffiliate: true,
-        seoOptimized: true
-      }, {
-        timeout: 60000, // 60 second timeout for AI generation
-        headers: {
-          'Content-Type': 'application/json'
+      // Call the pretty route that maps to our Netlify function
+      const response = await axios.post(
+        '/api/generate',
+        {
+          inputValue: inputValue.trim(),
+          inputType,
+          selectedNiche,
+          apiProvider,
+          // Additional parameters for content customization
+          wordCount: 3000,
+          includeAffiliate: true,
+          seoOptimized: true
+        },
+        {
+          timeout: 60000, // 60s
+          headers: { 'Content-Type': 'application/json' }
         }
-      });
+      );
 
-      if (response.data.success) {
-        // Process successful API response
+      if (response.data?.success) {
         const processedContent = {
           title: response.data.title,
           description: response.data.description,
@@ -131,26 +132,23 @@ function App() {
 
         setGeneratedPage(processedContent);
         console.log(`Successfully generated ${processedContent.wordCount} words using ${response.data.apiProvider}`);
-        
       } else {
-        throw new Error(response.data.error || 'Unknown error occurred during generation');
+        throw new Error(response.data?.error || 'Unknown error occurred during generation');
       }
+    } catch (err) {
+      console.error('Generation error:', err);
 
-    } catch (error) {
-      console.error('Generation error:', error);
-      
       let errorMessage = 'Failed to generate content. ';
-      
-      if (error.code === 'ECONNABORTED') {
+      if (err.code === 'ECONNABORTED') {
         errorMessage += 'The request timed out. Please try again.';
-      } else if (error.response?.status === 404) {
+      } else if (err.response?.status === 404) {
         errorMessage += 'API endpoint not found. Make sure the serverless function is deployed.';
-      } else if (error.response?.status === 500) {
+      } else if (err.response?.status === 500) {
         errorMessage += 'Server error. Please check your API keys and try again.';
-      } else if (error.response?.data?.error) {
-        errorMessage += error.response.data.error;
+      } else if (err.response?.data?.error) {
+        errorMessage += err.response.data.error;
       } else {
-        errorMessage += error.message;
+        errorMessage += err.message || 'Unknown error';
       }
 
       // Show demo content as fallback with clear explanation
@@ -286,7 +284,6 @@ Ready to get started? Here's exactly what you need to do next to begin your tran
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden">
-      
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900" />
@@ -327,10 +324,8 @@ Ready to get started? Here's exactly what you need to do next to begin your tran
         <ErrorDisplay />
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Left Panel - Input Controls */}
           <div className="lg:col-span-1 space-y-6">
-            
             {/* Content Source Configuration */}
             <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
               <div className="flex items-center mb-4">
@@ -468,7 +463,6 @@ Ready to get started? Here's exactly what you need to do next to begin your tran
 
           {/* Right Panel - Results Display */}
           <div className="lg:col-span-2 space-y-6">
-            
             {/* Welcome State */}
             {!generatedPage && !isGenerating && (
               <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl text-center py-16 px-8">
