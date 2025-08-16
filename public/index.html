@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic Meta Tags -->
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Theme and Browser Configuration -->
+  <meta name="theme-color" content="#581c87" />
+  <meta name="color-scheme" content="dark light" />
+  
+  <!-- SEO and Social Media Meta Tags -->
+  <meta name="description" content="AI-powered landing page generator that creates high-converting, natural-sounding content using advanced language models. Transform keywords into comprehensive 3000+ word landing pages optimized for affiliate marketing." />
+  <meta name="keywords" content="AI content generation, landing page creator, affiliate marketing, copywriting, OpenAI, Anthropic Claude, content marketing, conversion optimization" />
+  <meta name="author" content="Prompt to Profits AI" />
+  
+  <!-- Open Graph Meta Tags for Social Media Sharing -->
+  <meta property="og:title" content="Prompt to Profits AI - AI-Powered Landing Page Generator" />
+  <meta property="og:description" content="Create high-converting landing pages in minutes using advanced AI. Generate natural, engaging content that converts visitors into customers." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="%PUBLIC_URL%" />
+  <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Prompt to Profits AI" />
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Prompt to Profits AI - AI-Powered Landing Page Generator" />
+  <meta name="twitter:description" content="Create high-converting landing pages in minutes using advanced AI. Generate natural, engaging content that converts visitors into customers." />
+  <meta name="twitter:image" content="%PUBLIC_URL%/twitter-image.png" />
+  <meta name="twitter:creator" content="@prompttoprofits" />
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="language" content="English" />
+  <meta name="revisit-after" content="7 days" />
+  
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  
+  <!-- Apple Touch Icon and Mobile App Meta Tags -->
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Prompt to Profits AI" />
+  
+  <!-- Android/Chrome App Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Prompt to Profits AI" />
+  
+  <!-- Microsoft Tile Configuration -->
+  <meta name="msapplication-TileColor" content="#581c87" />
+  <meta name="msapplication-config" content="%PUBLIC_URL%/browserconfig.xml" />
+  
+  <!-- Preconnect to External Resources for Performance -->
+  <link rel="preconnect" href="https://api.openai.com" crossorigin>
+  <link rel="preconnect" href="https://api.anthropic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  
+  <!-- Progressive Web App Manifest -->
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="%PUBLIC_URL%" />
+  
+  <!-- Page Title -->
+  <title>Prompt to Profits AI - AI-Powered Landing Page Generator</title>
+  
+  <!-- Structured Data for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Prompt to Profits AI",
+    "description": "AI-powered landing page generator that creates high-converting, natural-sounding content using advanced language models.",
+    "url": "%PUBLIC_URL%",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "Prompt to Profits AI"
+    },
+    "featureList": [
+      "AI Content Generation",
+      "Multiple AI Providers",
+      "SEO Optimization",
+      "Affiliate Marketing Integration",
+      "Responsive Design",
+      "Real-time Generation"
+    ]
+  }
+  </script>
+  
+  <!-- Performance and Analytics -->
+  <script>
+    // Performance timing
+    window.performance.mark('html-start');
+    
+    // Analytics placeholder (replace with your analytics code)
+    // window.gtag = window.gtag || function(){(gtag.q=gtag.q||[]).push(arguments)};
+    // gtag('js', new Date());
+    // gtag('config', 'GA_MEASUREMENT_ID');
+  </script>
+  
+  <!-- Critical CSS for Above-the-Fold Content -->
+  <style>
+    /* Critical CSS to prevent layout shift */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: linear-gradient(135deg, #581c87, #1e3a8a, #312e81);
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    
+    /* Loading animation for better UX */
+    .app-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      flex-direction: column;
+      background: linear-gradient(135deg, #581c87, #1e3a8a, #312e81);
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-left: 4px solid #facc15;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    .loading-text {
+      color: #e2e8f0;
+      font-size: 1.125rem;
+      text-align: center;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Hide loading when React app loads */
+    #root:not(:empty) + .app-loading {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- No Script Warning -->
+  <noscript>
+    <div style="text-align: center; padding: 2rem; color: #ffffff; background: linear-gradient(135deg, #581c87, #1e3a8a, #312e81); min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+      <h1>JavaScript Required</h1>
+      <p>Prompt to Profits AI requires JavaScript to function properly.</p>
+      <p>Please enable JavaScript in your browser settings and reload the page.</p>
+    </div>
+  </noscript>
+  
+  <!-- React App Root Element -->
+  <div id="root"></div>
+  
+  <!-- Loading Fallback (shown while React loads) -->
+  <div class="app-loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">
+      <h2 style="margin: 0 0 0.5rem 0; font-weight: 600;">Prompt to Profits AI</h2>
+      <p style="margin: 0; opacity: 0.8;">Loading your AI-powered content generator...</p>
+    </div>
+  </div>
+  
+  <!-- Service Worker Registration (Progressive Web App) -->
+  <script>
+    // Register service worker for offline functionality
+    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+    
+    // Performance marking
+    window.performance.mark('html-end');
+  </script>
+  
+  <!-- Error Boundary Fallback -->
+  <script>
+    // Global error handler
+    window.addEventListener('error', function(e) {
+      console.error('Global error:', e);
+      // In production, you might want to send this to an error tracking service
+    });
+    
+    window.addEventListener('unhandledrejection', function(e) {
+      console.error('Unhandled promise rejection:', e);
+      // In production, you might want to send this to an error tracking service
+    });
+  </script>
+  
+  <!-- Preload critical resources -->
+  <script>
+    // Preload critical API endpoints
+    if ('fetch' in window) {
+      fetch('/.netlify/functions/health-check', { method: 'HEAD' }).catch(() => {});
+    }
+  </script>
+</body>
+</html>
