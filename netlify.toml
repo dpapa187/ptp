@@ -1,0 +1,19 @@
+# ===== PLUGINS =====
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+# ===== BUILD =====
+[build]
+  command = "CI= npm run build"
+  publish = "build"
+
+# ===== FUNCTIONS =====
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# ===== REDIRECTS =====
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
