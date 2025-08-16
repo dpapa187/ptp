@@ -1,0 +1,21 @@
+# ===== PLUGIN CONFIGURATION =====
+[[plugins]]
+  package = "@netlify/plugin-sitemap"
+
+[[plugins]]
+  package = "netlify-plugin-html-validate"
+
+# ===== BUILD CONFIGURATION =====
+[build]
+  command = "npm run build"
+  publish = "build"
+
+# ===== FUNCTIONS CONFIGURATION =====
+[functions]
+  directory = "netlify/functions"
+
+# ===== REDIRECTS CONFIGURATION =====
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
