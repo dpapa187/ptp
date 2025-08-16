@@ -41,6 +41,8 @@ build/Release
 node_modules/
 build/
 jspm_packages/
+# Build output (don’t push this, Netlify makes it)
+build/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
