@@ -1,21 +1,21 @@
-# ===== PLUGIN CONFIGURATION =====
+# Netlify config for a static site + serverless functions
+# No build step. We just publish the 'public' folder.
+
+[build]
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+
+# Optional: pretty routes for functions (/.netlify/functions/* still works)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Optional plugins (safe to keep)
 [[plugins]]
   package = "@netlify/plugin-sitemap"
 
 [[plugins]]
   package = "netlify-plugin-html-validate"
-
-# ===== BUILD CONFIGURATION =====
-[build]
-  command = "npm run build"
-  publish = "build"
-
-# ===== FUNCTIONS CONFIGURATION =====
-[functions]
-  directory = "netlify/functions"
-
-# ===== REDIRECTS CONFIGURATION =====
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
