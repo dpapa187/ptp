@@ -1,0 +1,202 @@
+# Netlify Configuration File
+# This file tells Netlify exactly how to build and deploy your application
+# Think of it as a detailed instruction manual for the deployment process
+
+# ===== BUILD CONFIGURATION =====
+# These settings control how Netlify transforms your source code into a production website
+[build]
+  # The directory where Netlify should look for your built website files
+  # React's build process creates optimized files in the 'build' directory
+  publish = "build"
+  
+  # The command Netlify runs to build your application
+  # This tells npm to run the build script defined in your package.json
+  command = "npm run build"
+  
+  # The directory where your serverless functions are located
+  # This enables your backend API endpoints to work properly
+  functions = "netlify/functions"
+
+# ===== BUILD ENVIRONMENT =====
+# Environment variables and settings that affect the build process
+[build.environment]
+  # Specify which version of Node.js to use for building
+  # This ensures consistent builds regardless of Netlify's default version
+  NODE_VERSION = "18"
+  
+  # Enable newer JavaScript features during the build process
+  # This allows your code to use modern syntax and optimizations
+  NODE_ENV = "production"
+  
+  # Optimize the build for better performance
+  # This enables various React and webpack optimizations
+  GENERATE_SOURCEMAP = "false"
+  
+  # Increase memory limit for the build process if needed
+  # Useful for larger applications that might run out of memory during build
+  NODE_OPTIONS = "--max-old-space-size=4096"
+
+# ===== SERVERLESS FUNCTIONS CONFIGURATION =====
+# Settings that control how your backend functions operate
+[functions]
+  # Use esbuild for faster function bundling and better performance
+  # This makes your serverless functions start up more quickly
+  node_bundler = "esbuild"
+  
+  # Set the Node.js runtime version for your functions
+  # Ensures compatibility between your local development and production
+  node_version = "18"
+  
+  # Enable source maps for better debugging of function errors
+  # This helps you troubleshoot issues when they occur in production
+  source_maps = true
+
+# ===== URL REDIRECTS AND ROUTING =====
+# These rules ensure your React Router works properly and handle special cases
+[[redirects]]
+  # Handle client-side routing for your React application
+  # This ensures that URLs like /generate or /results work correctly
+  # when users navigate directly to them or refresh the page
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  
+  # Only apply this rule to GET requests (not API calls)
+  # This prevents interference with your serverless function endpoints
+  conditions = {Role = ["admin"], Country = ["*"]}
+
+# API endpoint redirects (optional - for cleaner URLs)
+[[redirects]]
+  # Redirect API calls to the correct serverless function
+  # This allows you to use /api/* URLs instead of /.netlify/functions/*
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# ===== HEADERS CONFIGURATION =====
+# Security and performance headers for better user experience
+[[headers]]
+  # Apply these headers to all pages
+  for = "/*"
+  [headers.values]
+    # Security headers to protect against common attacks
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # Performance headers for better caching
+    # Cache static assets for better loading times
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Special headers for your API endpoints
+[[headers]]
+  # Apply CORS headers to your API functions
+  for = "/api/*"
+  [headers.values]
+    # Allow your frontend to communicate with your backend
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    
+    # Don't cache API responses (always get fresh data)
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Headers for static assets (images, CSS, JS)
+[[headers]]
+  # Optimize caching for files that rarely change
+  for = "/static/*"
+  [headers.values]
+    # Cache these files for a full year (they have unique names when they change)
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ===== BRANCH-SPECIFIC CONFIGURATION =====
+# Different settings for different git branches (optional but useful)
+
+# Production branch settings (main/master branch)
+[context.production]
+  # Use production environment variables
+  command = "npm run build"
+  
+  # Production-specific environment variables can be set here
+  [context.production.environment]
+    NODE_ENV = "production"
+    REACT_APP_ENVIRONMENT = "production"
+
+# Development branch settings (for testing)
+[context.branch-deploy]
+  # Command for preview deployments of feature branches
+  command = "npm run build"
+  
+  [context.branch-deploy.environment]
+    NODE_ENV = "development"
+    REACT_APP_ENVIRONMENT = "preview"
+
+# Deploy preview settings (for pull requests)
+[context.deploy-preview]
+  # Command for deploy previews (when someone creates a pull request)
+  command = "npm run build"
+  
+  [context.deploy-preview.environment]
+    NODE_ENV = "development"
+    REACT_APP_ENVIRONMENT = "preview"
+
+# ===== PLUGIN CONFIGURATION =====
+# Optional plugins that can enhance your deployment
+
+# Essential plugins for React applications
+[[plugins]]
+  # Optimize your bundle size and performance
+  package = "@netlify/plugin-sitemap"
+  
+# Security and performance plugin
+[[plugins]]
+  # Add security headers automatically
+  package = "netlify-plugin-html-validate"
+
+# ===== EDGE FUNCTIONS CONFIGURATION (ADVANCED) =====
+# For future expansion if you want to add edge computing capabilities
+[edge_functions]
+  # Path where edge functions would be located (if you add them later)
+  directory = "netlify/edge-functions"
+
+# ===== FORM HANDLING (IF NEEDED) =====
+# Configuration for Netlify Forms (if you add contact forms later)
+[forms]
+  # Settings would go here if you implement contact forms or feedback systems
+
+# ===== BUILD HOOKS AND NOTIFICATIONS =====
+# You can configure webhooks here to trigger builds from external systems
+# This is useful for content management systems or scheduled rebuilds
+
+# Example build hook configuration (commented out)
+# [build.hooks]
+#   # Trigger rebuilds when content changes in your CMS
+#   webhook_url = "https://api.netlify.com/build_hooks/your_hook_id"
+
+# ===== DEVELOPMENT SETTINGS =====
+# Settings that only apply during local development with netlify dev
+[dev]
+  # The command to start your local development server
+  command = "npm start"
+  
+  # Port for your React development server
+  targetPort = 3000
+  
+  # Port for the Netlify dev proxy (includes functions)
+  port = 8888
+  
+  # Automatically open browser when starting development
+  autoLaunch = true
+  
+  # Enable function debugging
+  functions = "netlify/functions"
+
+# ===== MONITORING AND ANALYTICS =====
+# Configuration for built-in Netlify monitoring (optional)
+# [build.processing]
+#   # Enable bundle analysis
+#   bundle_analyzer = true
+#   
+#   # Enable build time optimization
+#   skip_processing = false
