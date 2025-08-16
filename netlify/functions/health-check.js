@@ -16,6 +16,8 @@ export default async (req, context) => {
     if (anthropicKey) availableProviders.push("anthropic");
 
     const status = {
+      // 👇 add this line so older code that expects `ok` still works
+      ok: true,
       healthy: true,
       timestamp: new Date().toISOString(),
       services: {
@@ -39,6 +41,7 @@ export default async (req, context) => {
     });
   } catch (error) {
     return new Response(JSON.stringify({
+      ok: false,
       healthy: false,
       timestamp: new Date().toISOString(),
       error: "System health check failed",
