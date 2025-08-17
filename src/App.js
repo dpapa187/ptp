@@ -1,12 +1,38 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Zap, Globe, DollarSign, TrendingUp, Share2, Settings,
-  Download, ExternalLink, Sparkles, Eye, AlertCircle,
-  CheckCircle, Loader2, Link as LinkIcon, X, Layers,
-  BookOpen
-} from 'lucide-react';
-import './App.css';
+import { apiUrl } from './api'; // <-- add this
+
+// ...
+
+useEffect(() => {
+  // Health check
+  axios.get(apiUrl('/api/health'), { timeout: 5000 })
+    .then(res => setApiStatus(res.data?.healthy ? 'connected' : 'partial'))
+    .catch(() => setApiStatus('development'));
+}, []);
+
+// ...
+
+const handleGenerate = async () => {
+  // ...
+  const res = await axios.post(
+    apiUrl('/api/generate'),
+    {
+      inputValue: enhancedPrompt,
+      inputType,
+      selectedNiche,
+      apiProvider,
+      wordCount: 1500,     // keep moderate to avoid timeouts
+      includeAffiliate: activeNetworks.length > 0,
+      seoOptimized: true,
+      template: selectedTemplate,
+      affiliateNetworks: activeNetworks
+    },
+    { timeout: 90000 }
+  );
+  // ...
+};
+
 
 /**
  * ===== API Base =====
