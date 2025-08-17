@@ -1,0 +1,62 @@
+from pathlib import Path
+import textwrap
+
+base = Path("/mnt/data/render-404-fix")
+base.mkdir(parents=True, exist_ok=True)
+
+# _redirects for Render Static Site
+redirects = textwrap.dedent("""\
+# Proxy API calls to your Render backend
+/api/*  https://YOUR-BACKEND-SERVICE.onrender.com/api/:splat  200
+
+# SPA fallback for React Router (prevents 404 on refresh)
+/*     /index.html  200
+""")
+(base / "_redirects").write_text(redirects)
+
+# api helper for React
+api_js = textwrap.dedent("""\
+// src/lib/api.js
+const API_BASE =
+  (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_URL) ||
+  (typeof window !== 'undefined' && (window.__API_URL__ || '')) ||
+  '';
+
+// Ensures no trailing slash issues
+export const apiUrl = (path = '') => {
+  const base = API_BASE.replace(/\\/$/, '');
+  const p = String(path || '').startsWith('/') ? path : '/' + path;
+  return base + p;
+};
+
+export default apiUrl;
+""")
+(base / "api.js").write_text(api_js)
+
+# .env.example for frontend
+env_example = "REACT_APP_API_URL=https://YOUR-BACKEND-SERVICE.onrender.com\n"
+(base / ".env.example").write_text(env_example)
+
+# README quick steps
+readme = textwrap.dedent("""\
+Render 404 Fix Pack
+
+1) Add the `_redirects` file to your React app PUBLIC folder (public/_redirects) and commit.
+   - Replace YOUR-BACKEND-SERVICE with your actual Render backend host.
+   - This does two things:
+       • Proxies /api/* to your backend service
+       • Adds SPA fallback so React Router works on refresh
+
+2) In your frontend repo root, create `.env` with:
+   REACT_APP_API_URL=https://YOUR-BACKEND-SERVICE.onrender.com
+
+3) Update your API calls to use this base:
+   import { apiUrl } from './lib/api';
+   axios.get(apiUrl('/api/health'));
+   axios.post(apiUrl('/api/generate'), body);
+
+4) Rebuild & redeploy the Static Site on Render.
+""")
+(base / "README.txt").write_text(readme)
+
+str(base)
