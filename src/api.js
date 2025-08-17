@@ -1,14 +1,4 @@
-// src/lib/api.js
-const API_BASE =
-  (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_URL) ||
-  (typeof window !== 'undefined' && (window.__API_URL__ || '')) ||
-  '';
+// src/api.js
+export const API_BASE = process.env.REACT_APP_API_URL?.replace(/\/$/, '') || '';
+export const apiUrl = (path) => `${API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
 
-// Ensures no trailing slash issues
-export const apiUrl = (path = '') => {
-  const base = API_BASE.replace(/\/$/, '');
-  const p = String(path || '').startsWith('/') ? path : '/' + path;
-  return base + p;
-};
-
-export default apiUrl;
