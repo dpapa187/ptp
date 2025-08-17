@@ -1,32 +1,37 @@
 import express from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import fetch from "node-fetch";
 
-dotenv.config();
 const app = express();
-
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// simple health check
 app.get("/api/health", (req, res) => {
-  res.json({ healthy: true });
+  res.json({
+    healthy: true,
+    timestamp: new Date().toISOString(),
+    services: { functions: "operational", environment: "configured", aiProviders: [] },
+    version: "1.0.0",
+    deployment: { region: "render", environment: "production" }
+  });
 });
 
-// generation endpoint (stub for now)
+// Minimal placeholder; replace with your real logic or proxy to OpenAI/Anthropic
 app.post("/api/generate", async (req, res) => {
-  try {
-    // eventually call OpenAI/Anthropic here with req.body
-    res.json({
-      success: true,
-      content: `<h1>Generated Landing Page</h1><p>This came from your backend API.</p>`
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
+  const { inputValue = "Your Topic", template = "minimalist" } = req.body || {};
+  const html = `<!doctype html><html><body><h1>${template} — ${inputValue}</h1><p>Demo content from backend. Wire your AI here.</p></body></html>`;
+  res.json({
+    success: true,
+    title: `${inputValue} — Generated (Demo)`,
+    description: "Demo from Render backend",
+    content: html,
+    wordCount: 800,
+    seoScore: 90,
+    suggestedImages: 3,
+    affiliateOpportunities: 4,
+    apiProvider: "demo"
+  });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+const port = process.env.PORT || 10000;
+app.listen(port, () => console.log(`API listening on ${port}`));
+
